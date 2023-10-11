@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="NetLibrary">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="NetLibrary\CrashDump">
+      <UniqueIdentifier>{c22f32f4-a398-4d3e-9deb-ca975180a7c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetLibrary\DataStructure">
+      <UniqueIdentifier>{30d8108e-e0a9-4c79-af3d-9f3069af0c24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetLibrary\Logger">
+      <UniqueIdentifier>{6155a31b-c0b7-4b9f-9b41-824199edb672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetLibrary\Memory">
+      <UniqueIdentifier>{b602d232-c3f5-4c2f-856f-4cfbe87d8ee4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetLibrary\NetServer">
+      <UniqueIdentifier>{fbd87309-3105-49bc-977d-3716e39c47a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetLibrary\Profiler">
+      <UniqueIdentifier>{504b8e13-86d7-49b5-9f6a-0bc8ebdad35c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetLibrary\Tool">
+      <UniqueIdentifier>{8bcefea1-bd67-46b6-8d63-e2c9f44a4cf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contents">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\NetLibrary\CrashDump\CrashDump.cpp">
+      <Filter>NetLibrary\CrashDump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NetLibrary\Logger\Logger.cpp">
+      <Filter>NetLibrary\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NetLibrary\NetServer\NetClient.cpp">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NetLibrary\NetServer\NetServer.cpp">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NetLibrary\NetServer\Session.cpp">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NetLibrary\Profiler\Profiler.cpp">
+      <Filter>NetLibrary\Profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="EchoDummy.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalVariables.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\NetLibrary\CrashDump\CrashDump.h">
+      <Filter>NetLibrary\CrashDump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\DataStructure\LockFreeQueue.h">
+      <Filter>NetLibrary\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\DataStructure\LockFreeStack.h">
+      <Filter>NetLibrary\DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\Logger\Logger.h">
+      <Filter>NetLibrary\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\Memory\LockFreeObjectPool.h">
+      <Filter>NetLibrary\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\Memory\ObjectPool.h">
+      <Filter>NetLibrary\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\Memory\OverflowChecker.h">
+      <Filter>NetLibrary\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\Memory\TlsObjectPool.h">
+      <Filter>NetLibrary\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\NetServer\NetClient.h">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\NetServer\NetServer.h">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\NetServer\NetUtils.h">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\NetServer\NetworkHeader.h">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\NetServer\RingBuffer.h">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\NetServer\Serializer.h">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\NetServer\Session.h">
+      <Filter>NetLibrary\NetServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\Profiler\Profiler.h">
+      <Filter>NetLibrary\Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\Tool\ConfigReader.h">
+      <Filter>NetLibrary\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NetLibrary\Tool\CpuUsageMonitor.h">
+      <Filter>NetLibrary\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="EchoDummy.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalVariables.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
