@@ -35,20 +35,18 @@ public: // Getters
 public: // 클라이언트 핸들러 가상 함수
 
     virtual void OnReceive(Serializer* packet) = 0;
+    virtual void OnDisconnect(int errorCode) = 0;
 
 private: // 스레드 함수들
 
     static unsigned int recvThread(void* netClientSocket);
 
 private:
-    SOCKET mSocket = 0;
-    bool mbIsConnected = false;
-    std::wstring mServerIP;
-    uint16_t mServerPortNumber;
-
-    RingBuffer mRecvBuffer;
-
-    int mSendErrorCode = 0;
-
-    HANDLE mRecvThread = 0;
+    SOCKET          mSocket = 0;
+    HANDLE          mRecvThread = 0;
+    bool            mbIsConnected = false;
+    RingBuffer      mRecvBuffer;
+    int             mSendErrorCode = 0;
+    std::wstring    mServerIP;
+    uint16_t        mServerPortNumber;
 };

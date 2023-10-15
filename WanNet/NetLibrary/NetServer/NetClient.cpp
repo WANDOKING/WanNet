@@ -9,8 +9,6 @@ NetClient::NetClient(const std::wstring serverIP, const uint16_t serverPortNumbe
     , mServerPortNumber(serverPortNumber)
 {
     NetUtils::WSAStartup();
-
-    mSocket = NetUtils::CreateSocket();
 }
 
 bool NetClient::Connect(void)
@@ -19,6 +17,8 @@ bool NetClient::Connect(void)
     {
         return false;
     }
+
+    mSocket = NetUtils::CreateSocket();
 
     bool bConnectSuccess = NetUtils::TryConnect(mSocket, mServerIP.c_str(), mServerPortNumber);
 
@@ -30,6 +30,11 @@ bool NetClient::Connect(void)
     mRecvThread = (HANDLE)::_beginthreadex(nullptr, 0, recvThread, reinterpret_cast<void*>(this), 0, nullptr);
     mbIsConnected = true;
 
+    if (mRecvThread != 0)
+    {
+        ::CloseHandle(mRecvThread);
+    }
+
     return true;
 }
 
@@ -38,7 +43,7 @@ void NetClient::Disconnect(void)
     if (mbIsConnected)
     {
         mbIsConnected = false;
-        NetUtils::CloseSocket(mSocket);
+        shutdown(mSocket, SD_BOTH); // 소켓 재사용 방지를 위해 shutdown 사용 -> RecvThread에서 close
     }
 }
 
@@ -54,16 +59,12 @@ bool NetClient::SendPacket(Serializer* packet)
         packet->prepareSend();
     }
 
-    packet->IncrementRefCount();
-
     int retSend = ::send(mSocket, packet->GetFullBufferPointer(), packet->GetFullSize(), 0);
 
     if (retSend == SOCKET_ERROR)
     {
         mSendErrorCode = ::WSAGetLastError();
     }
-
-    packet->DecrementRefCount();
 
     return true;
 }
@@ -74,13 +75,18 @@ unsigned int NetClient::recvThread(void* netClient)
 
     NetworkHeader header{};
 
-    while (true)
+    for (;;)
     {
         int retRecv = recv(client->mSocket, client->mRecvBuffer.GetRearBufferPtr(), client->mRecvBuffer.GetDirectEnqueueSize(), 0);
     
-        if (retRecv == 0)
+        if (retRecv == 0 || retRecv == SOCKET_ERROR)
         {
             // disconnect
+            SOCKET socketBackup = client->mSocket;
+            client->mbIsConnected = false;
+            client->OnDisconnect(::WSAGetLastError());
+            NetUtils::CloseSocket(socketBackup);
+            break;
         }
 
         client->mRecvBuffer.MoveRear(retRecv);

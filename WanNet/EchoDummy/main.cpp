@@ -38,11 +38,14 @@ int main(void)
         if (bConnectSuccess)
         {
             Serializer* echoPacket = Serializer::Alloc();
-            *echoPacket << ::timeGetTime();
+            uint32_t sendTick = ::timeGetTime();
+            *echoPacket << sendTick;
+            echoDummys.back()->SetLastSendTick(sendTick);
             echoDummys.back()->SendPacket(echoPacket);
 
             Serializer::Free(echoPacket);
 
+            g_totalConnectedClientCount++;
             g_connectTotalCount++;
 
             wprintf(L"Connect Success\n");
@@ -58,20 +61,34 @@ int main(void)
     {
         ::Sleep(1'000);
 
+        uint32_t echoNotRecvCount = 0;
+        uint32_t currentTick = ::timeGetTime();
+        for (const auto& dummy : echoDummys)
+        {
+            if (currentTick - dummy->GetLastSendTick() > 500)
+            {
+                echoNotRecvCount++;
+            }
+        }
+
         uint32_t echoSendCount = InterlockedExchange(&g_echoSendCount, 0);
         uint32_t echoRecvCount = InterlockedExchange(&g_echoRecvCount, 0);
 
         wprintf(L"\n");
         wprintf(L"[     Echo Dummy Running    ]\n");
         wprintf(L"=============================\n");
-        wprintf(L"Total Client Count = %u\n", inputClientCount);
+        wprintf(L"Total Client Count = %u / %u\n", g_totalConnectedClientCount, inputClientCount);
+        wprintf(L"Connect Total      = %llu\n", g_connectTotalCount);
         wprintf(L"Packet Pool Size   = %u\n", Serializer::GetTotalPacketCount());
         wprintf(L"-----------------------------\n");
-        wprintf(L"Connect Total = %llu\n", g_connectTotalCount);
-        wprintf(L"Connect Fail  = %llu\n", g_connectFailCount);
+        wprintf(L"Connect Fail          = %llu\n", g_connectFailCount);
+        wprintf(L"Down Client           = %llu\n", g_downCount);
+        wprintf(L"Echo Error            = %llu\n", g_echoErrorCount);
+        wprintf(L"Echo Not Recv (500ms) = %u\n", echoNotRecvCount);
         wprintf(L"-----------------------------\n");
-        wprintf(L"Send TPS  = %u\n", echoSendCount);
-        wprintf(L"Recv TPS  = %u\n", echoRecvCount);
+        wprintf(L"Send TPS     = %u\n", echoSendCount);
+        wprintf(L"Recv TPS     = %u\n", echoRecvCount);
+        wprintf(L"Average RTT  = %3llu ms\n", g_rttSum / g_rttCount);
     }
 
     return 0;

@@ -80,7 +80,7 @@ public: // 세션 사용 함수
 
 public: // Getters
 
-    inline static std::wstring	GetServerVersion(void) { return L"6.5.9"; }
+    inline static std::wstring	GetServerVersion(void) { return L"6.7.0"; }
 
     inline bool					IsRunning(void) const { return mbIsRunning; }
     inline uint16_t				GetPortNumber(void) const { return mPort; }
