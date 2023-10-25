@@ -328,7 +328,7 @@ unsigned int NetServer::acceptThread(void* netServerParam)
 
 			netServer->OnAccept(newSession->ID);
 
-			netServer->mMonitoringVariables.AcceptTPS++;
+			InterlockedIncrement(&netServer->mMonitoringVariables.AcceptTPS);
 
 			newSession->PostRecv();
 
@@ -550,11 +550,11 @@ unsigned int NetServer::monitorThread(void* netServerParam)
 		netServer->mMonitorResult.ProcessTimeKernel = cpuTime.GetProcessTimeKernel();
 
 		// TPS
-		netServer->mMonitorResult.AcceptTPS = netServer->mMonitoringVariables.AcceptTPS;
-		netServer->mMonitorResult.RecvMessageTPS = netServer->mMonitoringVariables.RecvMessageTPS;
-		netServer->mMonitorResult.SendMessageTPS = netServer->mMonitoringVariables.SendMessageTPS;
-		netServer->mMonitorResult.RecvPendingTPS = netServer->mMonitoringVariables.RecvPendingTPS;
-		netServer->mMonitorResult.SendPendingTPS = netServer->mMonitoringVariables.SendPendingTPS;
+		netServer->mMonitorResult.AcceptTPS = InterlockedExchange(&netServer->mMonitoringVariables.AcceptTPS, 0);
+		netServer->mMonitorResult.RecvMessageTPS = InterlockedExchange(&netServer->mMonitoringVariables.RecvMessageTPS, 0);
+		netServer->mMonitorResult.SendMessageTPS = InterlockedExchange(&netServer->mMonitoringVariables.SendMessageTPS, 0);
+		netServer->mMonitorResult.RecvPendingTPS = InterlockedExchange(&netServer->mMonitoringVariables.RecvPendingTPS, 0);
+		netServer->mMonitorResult.SendPendingTPS = InterlockedExchange(&netServer->mMonitoringVariables.SendPendingTPS, 0);
 
 		// Avg TPS
 		sumAcceptTPS += netServer->mMonitorResult.AcceptTPS;
@@ -569,13 +569,6 @@ unsigned int NetServer::monitorThread(void* netServerParam)
 		netServer->mMonitorResult.AverageSendMessageTPS = static_cast<uint32_t>(sumSendMessageTPS / sumCount);
 		netServer->mMonitorResult.AverageRecvPendingTPS = static_cast<uint32_t>(sumRecvPendingTPS / sumCount);
 		netServer->mMonitorResult.AverageSendPendingTPS = static_cast<uint32_t>(sumSendPendingTPS / sumCount);
-
-		// 모니터링 변수 초기화
-		netServer->mMonitoringVariables.AcceptTPS = 0;
-		netServer->mMonitoringVariables.RecvMessageTPS = 0;
-		netServer->mMonitoringVariables.SendMessageTPS = 0;
-		netServer->mMonitoringVariables.RecvPendingTPS = 0;
-		netServer->mMonitoringVariables.SendPendingTPS = 0;
 	}
 
 	LOGF(ELogLevel::System, L"Monitor Thread End (ID : %d)", ::GetCurrentThreadId());
