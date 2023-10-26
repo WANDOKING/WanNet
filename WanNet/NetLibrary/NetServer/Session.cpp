@@ -131,7 +131,7 @@ bool Session::PostRecv()
         break;
         default:
             LOGF(ELogLevel::Error, L"WSARecv Error (errorCode = %d)", errorCode);
-            Logger::RaiseCrash();
+            CrashDump::Crash();
         }
     }
 
@@ -222,7 +222,7 @@ bool Session::PostSend()
         break;
         default:
             LOGF(ELogLevel::Error, L"WSASend Error (errorCode = %d)", errorCode);
-            Logger::RaiseCrash();
+            CrashDump::Crash();
         }
     }
 
@@ -241,7 +241,7 @@ bool Session::TryClosesocket()
     if (retClosesocket == SOCKET_ERROR)
     {
         LOGF(ELogLevel::Error, L"closesocket() Error : %d", WSAGetLastError());
-        Logger::RaiseCrash();
+        CrashDump::Crash();
     }
 
     return true;

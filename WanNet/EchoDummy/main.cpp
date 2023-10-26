@@ -88,7 +88,9 @@ int main(void)
         wprintf(L"-----------------------------\n");
         wprintf(L"Send TPS     = %u\n", echoSendCount);
         wprintf(L"Recv TPS     = %u\n", echoRecvCount);
-        wprintf(L"Average RTT  = %3llu ms\n", g_rttSum / g_rttCount);
+        
+        uint64_t averageRTT = g_rttCount == 0 ? 0 : g_rttSum / g_rttCount;
+        wprintf(L"Average RTT  = %3llu ms\n", averageRTT);
     }
 
     return 0;
