@@ -4,12 +4,15 @@
 
 #include <time.h>
 #include <Windows.h>
+#include <process.h>
 #include <strsafe.h>
 
 Logger Logger::mInstance;
 HANDLE Logger::mhLogFile;
 HANDLE Logger::mhMonitorFile;
 ELogLevel Logger::mLogLevel = ELogLevel::Debug;
+LockFreeQueue<WCHAR*> Logger::mAsyncLogQueue;
+HANDLE Logger::mAsyncLogEvent;
 
 void Logger::LogMonitor(const WCHAR * formatMessage, ...)
 {
@@ -116,6 +119,26 @@ void Logger::LogFormatWithTime(ELogLevel logLevel, const WCHAR* formatMessage, .
 	Logger::LogMessageWithTime(logLevel, completedMessage);
 }
 
+void Logger::LogMonitorAsync(const WCHAR* formatMessage, ...)
+{
+	WCHAR completedMessage[LOG_MESSAGE_MAX_LENGTH];
+
+	va_list ap;
+	va_start(ap, formatMessage);
+	{
+		StringCchVPrintfW(completedMessage, LOG_MESSAGE_MAX_LENGTH, formatMessage, ap);
+	}
+	va_end(ap);
+
+	WCHAR* log = new WCHAR[LOG_MESSAGE_MAX_LENGTH];
+
+	StringCchPrintfW(log, LOG_MESSAGE_MAX_LENGTH, L"%s\n", completedMessage);
+
+	mAsyncLogQueue.Enqueue(log);
+
+	::SetEvent(mAsyncLogEvent);
+}
+
 Logger::Logger()
 {
 	WCHAR fileName[_MAX_PATH * 2];
@@ -161,6 +184,10 @@ Logger::Logger()
 
 	::WriteFile(mhLogFile, &BOM_UTF_16_LE, sizeof(BOM_UTF_16_LE), nullptr, nullptr);
 	::WriteFile(mhMonitorFile, &BOM_UTF_16_LE, sizeof(BOM_UTF_16_LE), nullptr, nullptr);
+
+	mAsyncLogEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+
+	HANDLE hAsyncLogThread = reinterpret_cast<HANDLE>(::_beginthreadex(nullptr, 0, asyncLogThread, nullptr, 0, nullptr));
 }
 
 Logger::~Logger()
@@ -193,6 +220,26 @@ void Logger::getCurrentTimeInfo(WCHAR* outBuffer)
 	int ss = localTime.tm_sec;
 
 	StringCchPrintfW(outBuffer, DAY_INFO_BUFFER_LENGTH, L"%04d%02d%02d_%02d%02d%02d", YYYY, MM, DD, hh, mm, ss);
+}
+
+unsigned int Logger::asyncLogThread(void* param)
+{
+	for (;;)
+	{
+		::WaitForSingleObject(mAsyncLogEvent, INFINITE);
+
+		WCHAR* log;
+
+		while (mAsyncLogQueue.TryDequeue(log))
+		{
+			wprintf(log);
+			writeToFile(mhMonitorFile, log);
+
+			delete[] log;
+		}
+	}
+
+	return 0;
 }
 
 #pragma warning(push)

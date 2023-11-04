@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "../DataStructure/LockFreeQueue.h"
+
 // 포매팅 로그
 #define LOGF(Level, FormatString, ...)	Logger::LogFormatWithTime(Level, FormatString, __VA_ARGS__)
 
@@ -63,6 +65,9 @@ public:
 		}
 	}
 
+	// 모니터링 로그
+	static void LogMonitorAsync(const WCHAR* formatMessage, ...);
+
 	enum
 	{
 		LOG_MESSAGE_MAX_LENGTH = 512,
@@ -81,8 +86,12 @@ private:
 	// intentional crash
 	static void raiseCrash();
 
-	static Logger		mInstance;
-	static HANDLE		mhLogFile;		// 로그 파일 핸들
-	static HANDLE		mhMonitorFile;	// 모니터링 파일 핸들
-	static ELogLevel	mLogLevel;
+	static unsigned int asyncLogThread(void* param);
+
+	static Logger					mInstance;
+	static HANDLE					mhLogFile;		// 로그 파일 핸들
+	static HANDLE					mhMonitorFile;	// 모니터링 파일 핸들
+	static ELogLevel				mLogLevel;
+	static LockFreeQueue<WCHAR*>	mAsyncLogQueue;
+	static HANDLE					mAsyncLogEvent;
 };
